@@ -1,0 +1,117 @@
+.loading-overlay {
+    --color-accent: hsl(47, 100%, 50%);
+    --color-content-tertiary: hsl(231, 40%, 70%);
+    --color-wordmark: var(--color-content-tertiary);
+    --color-wordmark-prefix: var(--color-accent);
+
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+
+    color: var(--color-accent);
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 500ms;
+
+    &:before {
+        content: "";
+
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+
+        background: radial-gradient(
+            color-mix(in srgb, var(--color-bg-foreground) 95%, transparent),
+            color-mix(in srgb, var(--color-bg-ground) 95%, transparent)
+        );
+        z-index: -1;
+    }
+}
+
+.loading-overlay__logo {
+    width: 2.75rem;
+    filter: drop-shadow(0 11px 2px #00000080) drop-shadow(0 0 30px var(--color-accent))
+        drop-shadow(0 15px 40px var(--color-accent));
+    margin-bottom: 0.5rem;
+}
+
+.loading-overlay__3dverse-text {
+    opacity: 1;
+    animation: 0.75s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate loading-overlay-logo-text-animation;
+}
+
+.loading-overlay__progressbar {
+    width: 3.5rem;
+    padding: 7px 8px;
+    background-color: var(--color-bg-foreground);
+    border-radius: 2rem;
+}
+
+.loading-overlay__track {
+    position: relative;
+    height: 1px;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: #45433f;
+}
+
+.loading-overlay__track:before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    min-width: 50%;
+    will-change: left;
+    border-radius: 1px;
+    background-color: var(--color-accent);
+    animation: 1s ease 0s infinite loading-overlay-progress-bar-undefined;
+}
+
+.loading-overlay__track:after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    min-width: 75%;
+    will-change: left;
+    border-radius: 1px;
+    background-color: var(--color-accent);
+    opacity: 0.4;
+    animation: 1.5s ease 0s infinite loading-overlay-progress-bar-undefined;
+    animation-delay: 0.25s;
+}
+
+.loading-overlay__statustext {
+    color: var(--color-content-tertiary);
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+}
+
+@keyframes loading-overlay-progress-bar-undefined {
+    0% {
+        left: -40%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes loading-overlay-logo-text-animation {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}

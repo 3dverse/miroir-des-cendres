@@ -1,7 +1,12 @@
 //------------------------------------------------------------------------------
 import { Livelink, Canvas, Viewport, useEntity, LivelinkContext, ViewportContext } from "@3dverse/livelink-react";
 import { useCharacterController } from "./hooks/useCharacterController";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
+
+//------------------------------------------------------------------------------
+import { HomeMenu } from "./components/HomeMenu";
+import { GameMenu } from "./components/GameMenu";
+import { LoadingOverlay } from "./components/LoadingScreen";
 
 //------------------------------------------------------------------------------
 const scene_id = "b8d478b8-438e-41b5-967f-350d1db91e2a";
@@ -10,23 +15,36 @@ const token = "public_kBtqQ1_7-YFE1hZx";
 //------------------------------------------------------------------------------
 export default function App() {
     const [hasStarted, setHasStarted] = useState(false);
+    const [isInMenu, setIsInMenu] = useState(false);
 
+    //--------------------------------------------------------------------------
+    const handleKeyDown = useCallback(
+        (event: KeyboardEvent) => {
+            if (hasStarted && event.key === "Escape") {
+                setIsInMenu(!isInMenu);
+            }
+        },
+        [hasStarted, isInMenu, setIsInMenu],
+    );
+
+    //--------------------------------------------------------------------------
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
+    //--------------------------------------------------------------------------
     if (!hasStarted) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <button
-                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
-                    onClick={() => setHasStarted(true)}
-                >
-                    Start
-                </button>
-            </div>
-        );
+        return <HomeMenu onStart={() => setHasStarted(true)} />;
     }
 
+    //--------------------------------------------------------------------------
     return (
-        <Livelink sceneId={scene_id} token={token}>
+        <Livelink sceneId={scene_id} token={token} LoadingPanel={LoadingOverlay}>
             <AppLayout />
+            {isInMenu && <GameMenu onQuit={() => setHasStarted(false)} />}
         </Livelink>
     );
 }
@@ -63,7 +81,7 @@ function DevicesListener() {
         instance.devices.gamepad.enable();
         instance.devices.mouse.enableOnViewport({ viewport });
 
-        viewportDomElement.requestPointerLock();
+        viewportDomElement.requestPointerLock && viewportDomElement.requestPointerLock();
     }, [instance, viewport, viewportDomElement]);
 
     return null;
