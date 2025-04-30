@@ -1,0 +1,25 @@
+{
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "printWidth": 120,
+    "proseWrap": "preserve",
+    "semi": true,
+    "singleQuote": false,
+    "tabWidth": 4,
+    "trailingComma": "all",
+    "useTabs": false,
+    "overrides": [
+        {
+            "files": ["*.json", "*.yml", "*.yaml"],
+            "options": {
+                "tabWidth": 2
+            }
+        },
+        {
+            "files": "./livelink.samples/src/samples/**/*.tsx",
+            "options": {
+                "printWidth": 80
+            }
+        }
+    ]
+}

@@ -1,11 +1,6 @@
 //------------------------------------------------------------------------------
-import {
-    Livelink,
-    Canvas,
-    Viewport,
-    CameraController,
-    useCameraEntity,
-} from "@3dverse/livelink-react";
+import { Livelink, Canvas, Viewport, CameraController } from "@3dverse/livelink-react";
+import { useCharacterController } from "./hooks/useCharacterController";
 
 //------------------------------------------------------------------------------
 const scene_id = "b8d478b8-438e-41b5-967f-350d1db91e2a";
@@ -22,11 +17,15 @@ export default function App() {
 
 //------------------------------------------------------------------------------
 function AppLayout() {
-    const { cameraEntity } = useCameraEntity();
+    const { characterCamera } = useCharacterController({
+        characterSceneId: "aa20cd90-0823-47da-8265-9ac3a8cc2e0f",
+        enabled: true,
+        startPosition: [-0.8, 2.8, 8.15],
+    });
 
     return (
         <Canvas className="max-h-screen">
-            <Viewport cameraEntity={cameraEntity} className="w-full h-full">
+            <Viewport cameraEntity={characterCamera} className="w-full h-full">
                 <CameraController />
             </Viewport>
         </Canvas>
