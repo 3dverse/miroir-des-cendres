@@ -46,13 +46,13 @@ function SimulationStarter() {
 
         console.log("Setting up controller");
 
-        viewportDomElement.requestPointerLock();
-
         instance.devices.keyboard.enable();
         instance.devices.gamepad.enable();
         instance.devices.mouse.enableOnViewport({ viewport });
 
         instance.startSimulation();
+
+        viewportDomElement.requestPointerLock();
     }, [instance, viewport, viewportDomElement]);
 
     return null;
