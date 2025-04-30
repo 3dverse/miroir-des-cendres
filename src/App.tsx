@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 import { Livelink, Canvas, Viewport, useEntity, LivelinkContext, ViewportContext } from "@3dverse/livelink-react";
 import { useCharacterController } from "./hooks/useCharacterController";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 //------------------------------------------------------------------------------
 const scene_id = "b8d478b8-438e-41b5-967f-350d1db91e2a";
@@ -9,6 +9,21 @@ const token = "public_kBtqQ1_7-YFE1hZx";
 
 //------------------------------------------------------------------------------
 export default function App() {
+    const [hasStarted, setHasStarted] = useState(false);
+
+    if (!hasStarted) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <button
+                    className="bg-blue-500 text-white font-bold py-2 px-4 rounded"
+                    onClick={() => setHasStarted(true)}
+                >
+                    Start
+                </button>
+            </div>
+        );
+    }
+
     return (
         <Livelink sceneId={scene_id} token={token}>
             <AppLayout />
@@ -44,13 +59,9 @@ function SimulationStarter() {
             return;
         }
 
-        console.log("Setting up controller");
-
         instance.devices.keyboard.enable();
         instance.devices.gamepad.enable();
         instance.devices.mouse.enableOnViewport({ viewport });
-
-        instance.startSimulation();
 
         viewportDomElement.requestPointerLock();
     }, [instance, viewport, viewportDomElement]);
