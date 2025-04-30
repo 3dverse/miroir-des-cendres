@@ -60,6 +60,8 @@ export function useCharacterController({
             client_uuid: instance.session.client_id!,
         });
 
+        instance.startSimulation();
+
         return () => {
             characterController.assignClientToScripts({
                 client_uuid: "00000000-0000-0000-0000-000000000000",

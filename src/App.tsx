@@ -43,14 +43,14 @@ function AppLayout() {
     return (
         <Canvas className="max-h-screen">
             <Viewport cameraEntity={characterCamera} className="w-full h-full">
-                <SimulationStarter />
+                <DevicesListener />
             </Viewport>
         </Canvas>
     );
 }
 
 //------------------------------------------------------------------------------
-function SimulationStarter() {
+function DevicesListener() {
     const { instance } = useContext(LivelinkContext);
     const { viewport, viewportDomElement } = useContext(ViewportContext);
 
