@@ -6,7 +6,7 @@ import type { Livelink, Entity, UUID, Vec3 } from "@3dverse/livelink";
 export function useCharacterController({
     characterSceneId,
     enabled = true,
-    startPosition = [0, 0, 0],
+    startPosition,
 }: {
     characterSceneId: UUID | null;
     enabled?: boolean;
@@ -41,7 +41,7 @@ export function useCharacterController({
         }
 
         // This hook should only run once when the instance is ready
-        if (instance && characterSceneId && !characterLinker) {
+        if (instance && characterSceneId && !characterLinker && startPosition) {
             instantiateCharacterScene(instance, characterSceneId, startPosition);
         }
     }, [instance, characterSceneId, characterLinker, startPosition]);
@@ -56,8 +56,6 @@ export function useCharacterController({
         characterController.assignClientToScripts({
             client_uuid: instance.session.client_id!,
         });
-
-        instance.startSimulation();
 
         return () => {
             characterController.assignClientToScripts({
