@@ -18,11 +18,11 @@ export default function App() {
 
 //------------------------------------------------------------------------------
 function AppLayout() {
-    const { entity: spawn } = useEntity({ name: "Spawn" });
+    const { entity: spawnEntity } = useEntity({ name: "Spawn" });
     const { characterCamera } = useCharacterController({
         characterSceneId: "aa20cd90-0823-47da-8265-9ac3a8cc2e0f",
         enabled: true,
-        startPosition: spawn?.global_transform.position,
+        spawnEntity,
     });
 
     return (

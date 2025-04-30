@@ -1,16 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { LivelinkContext } from "@3dverse/livelink-react";
-import type { Livelink, Entity, UUID, Vec3 } from "@3dverse/livelink";
+import type { Livelink, Entity, UUID } from "@3dverse/livelink";
 
 //------------------------------------------------------------------------------
 export function useCharacterController({
     characterSceneId,
     enabled = true,
-    startPosition,
+    spawnEntity,
 }: {
     characterSceneId: UUID | null;
     enabled?: boolean;
-    startPosition?: Vec3;
+    spawnEntity?: Entity | null;
 }) {
     const { instance } = useContext(LivelinkContext);
     const [characterLinker, setCharacterLinker] = useState<Entity | null>(null);
@@ -19,11 +19,14 @@ export function useCharacterController({
 
     //--------------------------------------------------------------------------
     useEffect(() => {
-        async function instantiateCharacterScene(instance: Livelink, characterSceneId: UUID, startPosition: Vec3) {
+        async function instantiateCharacterScene(instance: Livelink, characterSceneId: UUID, spawnEntity: Entity) {
             const playerSceneEntity = await instance.scene.newEntity({
                 name: "CharacterEntity",
                 components: {
-                    local_transform: { position: startPosition },
+                    local_transform: {
+                        position: spawnEntity.global_transform.position,
+                        orientation: spawnEntity.global_transform.orientation,
+                    },
                     scene_ref: { value: characterSceneId },
                 },
                 options: {
@@ -41,10 +44,10 @@ export function useCharacterController({
         }
 
         // This hook should only run once when the instance is ready
-        if (instance && characterSceneId && !characterLinker && startPosition) {
-            instantiateCharacterScene(instance, characterSceneId, startPosition);
+        if (instance && characterSceneId && !characterLinker && spawnEntity) {
+            instantiateCharacterScene(instance, characterSceneId, spawnEntity);
         }
-    }, [instance, characterSceneId, characterLinker, startPosition]);
+    }, [instance, characterSceneId, characterLinker, spawnEntity]);
 
     //--------------------------------------------------------------------------
     useEffect(() => {
