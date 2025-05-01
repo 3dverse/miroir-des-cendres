@@ -18,7 +18,7 @@ export default function App() {
     const [isInMenu, setIsInMenu] = useState(false);
 
     //--------------------------------------------------------------------------
-    const handleKeyDown = useCallback(
+    const keydownHandler = useCallback(
         (event: KeyboardEvent) => {
             if (hasStarted && event.key === "Escape") {
                 setIsInMenu(!isInMenu);
@@ -28,12 +28,18 @@ export default function App() {
     );
 
     //--------------------------------------------------------------------------
+    const quitSessionHandler = useCallback(() => {
+        setIsInMenu(false);
+        setHasStarted(false);
+    }, []);
+
+    //--------------------------------------------------------------------------
     useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", keydownHandler);
         return () => {
-            window.removeEventListener("keydown", handleKeyDown);
+            window.removeEventListener("keydown", keydownHandler);
         };
-    }, [handleKeyDown]);
+    }, [keydownHandler]);
 
     //--------------------------------------------------------------------------
     if (!hasStarted) {
@@ -44,7 +50,7 @@ export default function App() {
     return (
         <Livelink sceneId={scene_id} token={token} LoadingPanel={LoadingOverlay}>
             <AppLayout />
-            {isInMenu && <GameMenu onQuit={() => setHasStarted(false)} />}
+            {isInMenu && <GameMenu onQuit={quitSessionHandler} />}
         </Livelink>
     );
 }
