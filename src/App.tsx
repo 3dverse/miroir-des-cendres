@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-import { Livelink, Canvas, Viewport, useEntity, LivelinkContext, ViewportContext } from "@3dverse/livelink-react";
+import { Livelink, Canvas, Viewport, LivelinkContext, ViewportContext } from "@3dverse/livelink-react";
 import { useCharacterController } from "./hooks/useCharacterController";
 import { useContext, useEffect, useState, useCallback } from "react";
 
@@ -9,8 +9,8 @@ import { GameMenu } from "./components/GameMenu";
 import { LoadingOverlay } from "./components/LoadingScreen";
 
 //------------------------------------------------------------------------------
-const scene_id = "b8d478b8-438e-41b5-967f-350d1db91e2a";
-const token = "public_kBtqQ1_7-YFE1hZx";
+const scene_id = "465ce6a0-8768-4ba6-a6f2-5bee7532017b";
+const token = "public_bkCFD7lFhbDNREw3";
 
 //------------------------------------------------------------------------------
 export default function App() {
@@ -48,7 +48,7 @@ export default function App() {
 
     //--------------------------------------------------------------------------
     return (
-        <Livelink sceneId={scene_id} token={token} LoadingPanel={LoadingOverlay}>
+        <Livelink sceneId={scene_id} token={token} LoadingPanel={LoadingOverlay} autoJoinExisting={true}>
             <AppLayout />
             {isInMenu && <GameMenu onQuit={quitSessionHandler} />}
         </Livelink>
@@ -57,12 +57,7 @@ export default function App() {
 
 //------------------------------------------------------------------------------
 function AppLayout() {
-    const { entity: spawnEntity } = useEntity({ name: "Spawn" });
-    const { characterCamera } = useCharacterController({
-        characterSceneId: "aa20cd90-0823-47da-8265-9ac3a8cc2e0f",
-        enabled: true,
-        spawnEntity,
-    });
+    const { characterCamera } = useCharacterController({ name: "Player" });
 
     return (
         <Canvas className="max-h-screen">
@@ -87,7 +82,7 @@ function DevicesListener() {
         instance.devices.gamepad.enable();
         instance.devices.mouse.enableOnViewport({ viewport });
 
-        viewportDomElement.requestPointerLock && viewportDomElement.requestPointerLock();
+        viewportDomElement.requestPointerLock?.();
     }, [instance, viewport, viewportDomElement]);
 
     return null;

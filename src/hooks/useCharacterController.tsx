@@ -1,57 +1,39 @@
 import { useContext, useEffect, useState } from "react";
-import { LivelinkContext } from "@3dverse/livelink-react";
-import type { Livelink, Entity, UUID } from "@3dverse/livelink";
+import { LivelinkContext, useEntity } from "@3dverse/livelink-react";
+import type { Entity } from "@3dverse/livelink";
 
 //------------------------------------------------------------------------------
 export function useCharacterController({
-    characterSceneId,
-    enabled = true,
-    spawnEntity,
+    name,
 }: {
-    characterSceneId: UUID | null;
-    enabled?: boolean;
-    spawnEntity?: Entity | null;
+    name: string;
 }) {
     const { instance } = useContext(LivelinkContext);
-    const [characterLinker, setCharacterLinker] = useState<Entity | null>(null);
+    const { entity: playerSceneEntity } = useEntity({ name });
     const [characterCamera, setCharacterCamera] = useState<Entity | null>(null);
     const [characterController, setCharacterController] = useState<Entity | null>(null);
 
     //--------------------------------------------------------------------------
     useEffect(() => {
-        async function instantiateCharacterScene(instance: Livelink, characterSceneId: UUID, spawnEntity: Entity) {
-            const playerSceneEntity = await instance.scene.newEntity({
-                name: "CharacterEntity",
-                components: {
-                    local_transform: {
-                        position: spawnEntity.global_transform.position,
-                        orientation: spawnEntity.global_transform.orientation,
-                    },
-                    scene_ref: { value: characterSceneId },
-                },
-                options: {
-                    delete_on_client_disconnection: true,
-                },
-            });
+        if (!playerSceneEntity) {
+            return;
+        }
 
+        async function instantiateCharacterScene(playerSceneEntity: Entity) {
             const children = await playerSceneEntity.getChildren();
             const thirdPersonController = children.find(child => child.script_map !== undefined);
             const thirdPersonCameraEntity = children.find(child => child.camera !== undefined);
 
-            setCharacterLinker(playerSceneEntity);
             setCharacterController(thirdPersonController ?? null);
             setCharacterCamera(thirdPersonCameraEntity ?? null);
         }
 
-        // This hook should only run once when the instance is ready
-        if (instance && characterSceneId && !characterLinker && spawnEntity) {
-            instantiateCharacterScene(instance, characterSceneId, spawnEntity);
-        }
-    }, [instance, characterSceneId, characterLinker, spawnEntity]);
+        instantiateCharacterScene(playerSceneEntity);
+    }, [playerSceneEntity]);
 
     //--------------------------------------------------------------------------
     useEffect(() => {
-        if (!instance || !characterController || !enabled) {
+        if (!instance || !characterController) {
             return;
         }
 
@@ -67,7 +49,7 @@ export function useCharacterController({
                 client_uuid: "00000000-0000-0000-0000-000000000000",
             });
         };
-    }, [instance, characterController, enabled]);
+    }, [instance, characterController]);
 
-    return { characterCamera: enabled ? characterCamera : null };
+    return { characterCamera };
 }
